@@ -19,7 +19,11 @@ public class Sort {
 //		bubbleSortMethod(source);
 		// 快速排序
 //		quickSortMethod(source, 0, source.length - 1);
-		// 排序后
+		// 堆排序
+//		heapSortMethod(source);
+		// 希尔排序
+//		shellSort(source);
+		// 排序后	
 		printArray(source);
 	}
 	
@@ -120,12 +124,71 @@ public class Sort {
 		if (end + 1 < right) quickSortMethod(source, end + 1, right);
 	}
 	
+	/**
+	 * 堆排序
+	 * 	1. 构架初始最大堆
+	 * 	2. 每次将source[0]与末尾的元素交换，并调整以末尾元素前一个为界堆
+	 * @param source
+	 */
 	public static void heapSortMethod(int[] source) {
-		
+		if (source == null || source.length == 0) {
+			return;
+		}
+		// 构建初始大堆
+		buildMaxHeap(source);
+		// 堆顶与最后一个元素交换，并调整
+		for (int i = source.length - 1; i >= 0; i--) {
+			swap(source, 0, i);
+			adjustHeap(source, 0, i);
+		}
+	}
+	
+	public static void buildMaxHeap(int[] source) {
+		for (int i = source.length / 2 - 1; i >= 0; i--) {
+			adjustHeap(source, i, source.length);
+		}
 	}
 	
 	public static void adjustHeap(int[] source, int i, int length) {
-		
+		// 在父节点，左子节点，右子节点中找最大值
+		// 大顶下标
+		int maxIndex = i;
+		// 左子树2×i+1
+		// 如果左子树存在，并大于前最大值节点，设置最大值节点为左子树
+		if (i * 2 + 1 < length && source[maxIndex] < source[2 * i + 1] )
+			maxIndex = i * 2 + 1;
+		// 如果右子树存在，并大于前最大值节点，设置最大值节点为右子树
+		if (i * 2 + 2 < length && source[maxIndex] < source[2 * i + 2] )
+			maxIndex = i * 2 + 2;
+		// 右子树2×i+2
+		if (maxIndex != i) {
+			swap(source, i, maxIndex);
+			// 调整交换的节点的子节点
+			adjustHeap(source, maxIndex, length);
+		}
+	}
+	
+	/**
+	 * 希尔排序
+	 * 	1. 排序增量选择希尔增量
+	 * @param source
+	 */
+	public static void shellSort(int[] source) {
+		int len = source.length;
+		int temp, gap = len / 2;
+		while (gap > 0) {
+			// 多序列排序
+			for (int i = gap; i < len; i++) {
+				temp = source[i];
+				int preIndex = i - gap;
+				while (preIndex >= 0 && source[preIndex] > temp) {
+					source[preIndex + gap] = source[preIndex];
+					preIndex -= gap;
+				}
+				source[preIndex + gap] = temp;
+			}
+			gap /= 2;
+		}
 	}
 	
 	/**
