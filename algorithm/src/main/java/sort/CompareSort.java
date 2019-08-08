@@ -1,12 +1,14 @@
 package sort;
 
+import sort.support.BST;
+
 /**
  * a. 稳定性：相等的元素相对顺序不变，即稳定;反之，不稳定
  * b. 
  * @author norman
  *
  */
-public class Sort {
+public class CompareSort {
 
 	public static void main(String[] args) {
 		int[] source = new int[] {3,1,0,9,4,7,2,0};
@@ -23,6 +25,10 @@ public class Sort {
 //		heapSortMethod(source);
 		// 希尔排序
 //		shellSort(source);
+		// 归并排序
+//		source = mergeSort(source, 0, source.length - 1);
+		// 二叉排序算法
+//		source = binaryTreeSort(source);
 		// 排序后	
 		printArray(source);
 	}
@@ -143,13 +149,13 @@ public class Sort {
 		}
 	}
 	
-	public static void buildMaxHeap(int[] source) {
+	private static void buildMaxHeap(int[] source) {
 		for (int i = source.length / 2 - 1; i >= 0; i--) {
 			adjustHeap(source, i, source.length);
 		}
 	}
 	
-	public static void adjustHeap(int[] source, int i, int length) {
+	private static void adjustHeap(int[] source, int i, int length) {
 		// 在父节点，左子节点，右子节点中找最大值
 		// 大顶下标
 		int maxIndex = i;
@@ -192,12 +198,57 @@ public class Sort {
 	}
 	
 	/**
+	 * 归并排序
+	 * 1. 二分法分割数组
+	 * 2. 合并并排序两个数组
+	 * @param source
+	 */
+	public static int[] mergeSort(int[] source, int start, int end) {
+		// 将数组分成两部分
+		if (start == end) {
+			return new int[] {source[start]};
+		}
+		// 算中间索引值
+		int mid = start + (end - start) / 2;
+		int[] leftPart = mergeSort(source, start, mid);
+		int[] rightPart = mergeSort(source, mid + 1, end);
+		// 合并两个有序数据
+		return mergeTwoSortedArray(leftPart, rightPart);
+	}
+	
+	private static int[] mergeTwoSortedArray(int[] a, int[] b) {
+		int aIndex = 0, bIndex = 0, sIndex = 0;
+		int[] num = new int[a.length + b.length];
+		// 此时子两个序列中合并
+		while(aIndex < a.length && bIndex < b.length)
+			num[sIndex++] = a[aIndex]< b[bIndex] ? a[aIndex++] : b[bIndex++];
+		// 若其中有一个序列合并完成
+		while(aIndex < a.length)
+			num[sIndex++] = a[aIndex++];
+		while (bIndex < b.length) 
+			num[sIndex++] = b[bIndex++];
+		return num;
+	}
+	
+	/**
+	 * 二叉树排序
+	 * @param source
+	 */
+	public static int[] binaryTreeSort(int[] source) {
+		BST bst = new BST();
+		for (int i : source) {
+			bst.add(i);
+		}
+		return bst.collect();
+	}
+	
+	/**
 	 * 交换元素
 	 * @param source -- 数组
 	 * @param i -- 元素下表i
 	 * @param j -- 元素下表j
 	 */
-	public static void swap(int[] source, int i, int j) {
+	private static void swap(int[] source, int i, int j) {
 		int temp = source[i];
 		source[i] = source[j];
 		source[j] = temp;
