@@ -1,4 +1,4 @@
-package com.norman.sort;
+package sort;
 
 /**
  * a. 稳定性：相等的元素相对顺序不变，即稳定;反之，不稳定
