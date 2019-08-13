@@ -47,3 +47,4 @@ catalina.base_IS_UNDEFINED
 ## rebel
 rebel-remote.xml
 rebel.xml
+/bin/
