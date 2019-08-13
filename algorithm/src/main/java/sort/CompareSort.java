@@ -1,5 +1,10 @@
 package sort;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import sort.support.BST;
 
 /**
@@ -29,8 +34,13 @@ public class CompareSort {
 //		source = mergeSort(source, 0, source.length - 1);
 		// 二叉排序算法
 //		source = binaryTreeSort(source);
+		// 计数排序
+//		countSort(source);
+		// 桶排序 
+		List<Integer> result = bucketSort(Arrays.stream(source).boxed().collect(Collectors.toList()), 3);
+		System.out.println(result);
 		// 排序后	
-		printArray(source);
+//		printArray(source);
 	}
 	
 	public static void printArray(int[] array) {
@@ -240,6 +250,85 @@ public class CompareSort {
 			bst.add(i);
 		}
 		return bst.collect();
+	}
+	
+	/**
+	 * 计数排序
+	 * 	1. 适合排序有限长度的整数
+	 * @param source
+	 */
+	public static void countSort(int[] source) {
+		// 找到最大值与最小值
+		int max = source[0],min = source[0];
+		for (int i = 0; i < source.length; i++) {
+			if (max < source[i]) 
+				max = source[i];
+			if (min > source[i])
+				min = source[i];
+		}
+		int bias = 0 - min;
+		int[] bucket = new int[max - min + 1];
+		// 构建计数数组
+		for (int i = 0; i < source.length; i++) {
+			bucket[source[i] + bias]++;
+		}
+		// 根据计数数组生成排序序列
+		int index = 0, bucketIndex = 0;
+		while (index < source.length) {
+			if (bucket[bucketIndex] != 0) {
+				source[index++] = bucketIndex - bias;
+				bucket[bucketIndex]--;
+			}else {
+				bucketIndex++;
+			}
+		}
+	}
+	
+	/**
+	 * 桶排序
+	 * @param source
+	 */
+	public static List<Integer> bucketSort(List<Integer> source, int bucketSize) {
+		// 递归返回条件
+		if (source == null || source.size() < 2 || bucketSize == 0) {
+			return source;
+		}
+		// 找到最大值与最小值
+		int max = source.get(0),min = source.get(0);
+		for (Integer integer : source) {
+			if (max < integer) 
+				max = integer;
+			if (min > integer)
+				min = integer;
+		}
+		// 确定桶的数量
+		int bucketCount = (max - min) / bucketSize + 1;
+		
+		// 构建桶排序数据结构
+		List<List<Integer>> bucketStruct = new ArrayList<List<Integer>>();
+		// 初始化桶数据结构
+		for (int i = 0; i < bucketCount; i++) {
+			bucketStruct.add(new ArrayList<Integer>());
+		}
+		// 数据入桶
+		for (int i = 0; i < source.size(); i++) {
+			bucketStruct.get((source.get(i) - min) / bucketSize).add(source.get(i));
+		}
+		// 数据出桶
+
+		List<Integer> bucket = null;
+		List<Integer> result = new ArrayList<Integer>();
+		for (List<Integer> list : bucketStruct) {
+			if (bucketCount == 1) {
+				bucketSize--;
+			}
+			//排序桶内数据排序
+			bucket = bucketSort(list, bucketSize);
+			for (Integer integer : bucket) {
+				result.add(integer);
+			}
+		}
+		return result;
 	}
 	
 	/**
